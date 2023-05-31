@@ -1,0 +1,46 @@
+import heapq
+
+def A_star(start, goal, graph):
+    # Create a priority queue to store the nodes to visit
+    open_list = []
+    heapq.heappush(open_list, (0, start))
+    
+    # Create a dictionary to store the cost of each node
+    cost = {start: 0}
+    
+    # Create a dictionary to store the came from of each node
+    came_from = {}
+    
+    while open_list:
+        # Get the node with the lowest f score
+        current = heapq.heappop(open_list)[1]
+        
+        # Check if the current node is the goal
+        if current == goal:
+            return came_from
+        
+        # Get the neighbors of the current node
+        for neighbor in graph.neighbors(current):
+            # Calculate the cost of the neighbor
+            cost_to_neighbor = cost[current] + graph.cost(current, neighbor)
+            
+            # Check if the neighbor has not been visited or if the new cost is lower
+            if neighbor not in cost or cost_to_neighbor < cost[neighbor]:
+                # Update the cost of the neighbor
+                cost[neighbor] = cost_to_neighbor
+                
+                # Calculate the f score of the neighbor (g + h)
+                f_score = cost_to_neighbor + heuristic(neighbor, goal)
+                
+                # Add the neighbor to the priority queue
+                heapq.heappush(open_list, (f_score, neighbor))
+                
+                # Set the came from of the neighbor to the current node
+                came_from[neighbor] = current
+    
+    # If the goal is not reached, return None
+    return None
+
+def heuristic(node, goal):
+    # An example of a simple heuristic could be the Euclidean distance
+    return ((node[0] - goal[0]) ** 2 + (node[1] - goal[1]) ** 2) ** 0.5
